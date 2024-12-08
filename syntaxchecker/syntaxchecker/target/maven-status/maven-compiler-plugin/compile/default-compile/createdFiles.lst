@@ -1,0 +1,6 @@
+com\syntaxchecker\app\SyntaxCheckerApplication.class
+com\syntaxchecker\app\SyntaxCheckerController.class
+com\syntaxchecker\app\SyntaxCheckerService.class
+com\syntaxchecker\app\SyntaxChecker.class
+com\syntaxchecker\app\SyntaxCheckerRequest.class
+com\syntaxchecker\app\ReflectionUtils.class

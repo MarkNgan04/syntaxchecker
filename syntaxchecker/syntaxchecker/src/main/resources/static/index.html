@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntax Checker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .container h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .api-usage {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .response {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .response.success {
+            color: #28a745; /* Green for valid syntax */
+        }
+
+        .response.error {
+            color: #e74c3c; /* Red for invalid syntax or errors */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Syntax Checker</h1>
+    <div class="api-usage">
+        Remaining API calls: <span id="remainingCalls">5</span>
+    </div>
+    <textarea id="codeInput" placeholder="Enter your code here..."></textarea>
+    <br>
+    <button onclick="checkSyntax()">Check Syntax</button>
+    <div class="response" id="response"></div>
+</div>
+
+<script>
+    localStorage.clear();
+
+    // Initialize API calls
+    let remainingApiCalls = 5;
+
+    // Parse URL parameters for additional API calls
+    const urlParams = new URLSearchParams(window.location.search);
+    const additionalCalls = parseInt(urlParams.get('apiCalls')) || 0;
+
+    // Update remaining API calls with the value from URL parameters
+    if (additionalCalls > 0) {
+        remainingApiCalls = additionalCalls; // Set it directly to the value passed
+    }
+
+    // Update the displayed remaining API calls
+    const remainingCallsSpan = document.getElementById('remainingCalls');
+    remainingCallsSpan.innerText = remainingApiCalls;
+
+    // Syntax checker logic
+    async function checkSyntax() {
+        const code = document.getElementById('codeInput').value;
+        const responseDiv = document.getElementById('response');
+
+        // Reset response message
+        responseDiv.innerText = '';
+        responseDiv.className = 'response';
+
+        // Validate input
+        if (!code) {
+            responseDiv.innerText = "Please enter code to check!";
+            responseDiv.classList.add('error');
+            return;
+        }
+
+        // Check if there are enough API calls left
+        if (remainingApiCalls <= 0) {
+            responseDiv.innerHTML = `
+                Error: No remaining API calls. Please purchase more.
+                <br>
+                <button onclick="location.href='payment.html'" style="margin-top: 10px; background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    Purchase More
+                </button>`;
+            responseDiv.classList.add('error');
+            return;
+        }
+
+        try {
+            // Mock API call (Replace '/api/check' with your actual API endpoint)
+            const response = await fetch('/api/check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: code })
+            });
+
+            // Handle response
+            if (response.ok) {
+                const isValid = await response.json();
+                if (isValid) {
+                    responseDiv.innerText = "Valid Syntax!";
+                    responseDiv.classList.add('success');
+                } else {
+                    responseDiv.innerText = "Invalid Syntax!";
+                    responseDiv.classList.add('error');
+                }
+
+                // Deduct one API call
+                remainingApiCalls--;
+                remainingCallsSpan.innerText = remainingApiCalls;
+            } else {
+                responseDiv.innerText = "Error: Unable to check syntax.";
+                responseDiv.classList.add('error');
+            }
+        } catch (error) {
+            responseDiv.innerText = `Error: ${error.message}`;
+            responseDiv.classList.add('error');
+        }
+    }
+</script>
+
+</body>
+</html>

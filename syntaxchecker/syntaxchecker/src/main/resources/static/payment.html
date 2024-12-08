@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntax Checker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+        }
+
+        body {
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .container h2 {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .container label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .container input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .container button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #0056b3;
+        }
+
+        .container .note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Syntax Checker</h1>
+    <h2>Payment Page</h2>
+    <form>
+        <label for="amount">Amount</label>
+        <input type="text" id="amount" placeholder="1" value="1">
+        <button type="button" onclick="processPayment()">Pay</button>
+    </form>
+    <div class="note">
+        Get 100 API calls for every $1
+    </div>
+</div>
+
+<script>
+    async function processPayment() {
+        const amount = document.getElementById('amount').value;
+
+        if (!amount || isNaN(amount) || Number(amount) <= 0 || amount % 1 !== 0) {
+            alert('This Syntax Checker only accepts whole dollars ($) no cents.');
+            return;
+        }
+
+        // PayPal Sandbox client ID
+        const PAYPAL_CLIENT_ID = 'AUj4FgiNMFebWUPIUk0DvzjUQYmZ8idweoUGgomvmHqO-S7dp1s0XBfd6hmiTmJldZk7Jz0kfDQERq4K';
+        const PAYPAL_SANDBOX_URL = 'https://sandbox.paypal.com';
+
+        try {
+            const paypalUrl = `https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_xclick&business=sb-mznpk34510201@business.example.com&item_name=API%20Credits&amount=${amount}&currency_code=USD&return=http://localhost:2024/paymentSuccess.html?amount=${amount}&cancel_return=http://localhost:2024/paymentCancel.html`;
+            window.location.href = paypalUrl;
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while processing the payment.');
+        }
+    }
+</script>
+</body>
+</html>

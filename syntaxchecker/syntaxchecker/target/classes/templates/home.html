@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syntax Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+    <script>
+        async function checkSyntax() {
+            const code = document.getElementById("code").value;
+            const resultDiv = document.getElementById("result");
+
+            try {
+                const response = await fetch("/api/check", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to check syntax");
+                }
+
+                const isValid = await response.json();
+                resultDiv.innerHTML = isValid ? "Valid Syntax" : "Syntax Error";
+            } catch (error) {
+                resultDiv.innerHTML = "Error: Unable to process the request.";
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Syntax Checker</h1>
+<textarea id="code" placeholder="Enter your code here"></textarea><br>
+<button onclick="checkSyntax()">Check Syntax</button>
+
+<div class="result" id="result">
+    <!-- The result will be displayed here -->
+</div>
+</body>
+</html>
